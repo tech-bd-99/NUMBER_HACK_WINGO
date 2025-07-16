@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NUMBER HACK TOOL</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* General Reset & Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Root Variables for Theming */
+        :root {
+            --primary: #0a0a1a;
+            --secondary: #14142e;
+            --accent: #4e00c2;
+            --accent-light: #6a2cff;
+            --neon-blue: #00f7ff;
+            --neon-pink: #ff00aa;
+            --neon-yellow: #ffcc00;
+            --neon-orange: #ff7700;
+            --text: #f0f0f0;
+            --signal-big: #00c3ff;
+            --signal-small: #ff2a6d;
+            --dark-bg: rgba(10, 10, 26, 0.95);
+            --success: #00d26a;
+            --warning: #ffcc00;
+            --danger: #ff3860;
+            --signal-box: #006400;
+        }
+
+        /* Body & Background */
+        body {
+            background: linear-gradient(135deg, #0a0a1a, #1a0a2e);
+            color: var(--text);
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(78, 0, 194, 0.15) 0%, transparent 70%);
+            z-index: -1;
+        }
+
+        /* Main Container for the Application */
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            display: none;
+        }
+
+        /* Login Screen */
+        .login-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .login-box {
+            background: var(--dark-bg);
+            border-radius: 15px;
+            padding: 40px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 0 50px rgba(78, 0, 194, 0.7);
+            border: 1px solid rgba(0, 247, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-box::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, var(--neon-blue), var(--accent), var(--neon-pink));
+            z-index: -1;
+            border-radius: 16px;
+        }
+
+        .login-title {
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            color: var(--neon-blue);
+            text-shadow: 0 0 10px rgba(0, 247, 255, 0.5);
+        }
+
+        .login-input {
+            width: 100%;
+            padding: 15px;
+            background: rgba(26, 26, 46, 0.8);
+            border: 1px solid rgba(78, 0, 194, 0.5);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+
+        .login-input:focus {
+            outline: none;
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 15px rgba(0, 247, 255, 0.3);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-light));
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .login-btn:hover {
+            background: linear-gradient(90deg, var(--accent-light), var(--accent));
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(78, 0, 194, 0.7);
+        }
+
+        /* Application Header */
+        .app-header {
+            background: var(--dark-bg);
+            padding: 5px 15px; /* Thinner padding */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 40px; /* Thinner header height */
+            flex-shrink: 0;
+            position: relative;
+            z-index: 10;
+        }
+
+        .app-header::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: -1px;
+            right: -1px;
+            bottom: -1px;
+            background: linear-gradient(45deg, var(--neon-blue), var(--accent), var(--neon-pink));
+            z-index: -1;
+        }
+
+        .app-name {
+            font-size: 1.2rem; /* Slightly smaller font for thinner header */
+            font-weight: bold;
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-pink));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 10px rgba(0, 247, 255, 0.5);
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .logout-btn {
+            background: var(--danger);
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px; /* Adjusted padding */
+            color: white;
+            font-size: 0.8rem; /* Adjusted font size */
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: #cc2a52;
+            box-shadow: 0 0 10px rgba(255, 56, 96, 0.7);
+        }
+
+        /* Compact Game Site Selector */
+        .site-selector {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+
+        .site-btn {
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            border: none;
+            border-radius: 5px;
+            color: white;
+            padding: 5px 8px; /* Adjusted padding */
+            font-size: 0.7rem; /* Adjusted font size */
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .site-btn.active {
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-pink));
+            box-shadow: 0 0 10px var(--neon-blue);
+            color: var(--primary);
+        }
+
+        .site-btn:hover:not(.active) {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 15px rgba(78, 0, 194, 0.7);
+        }
+
+        /* ULTRA-COMPACT GREEN SIGNAL BOX - SLIGHTLY LARGER */
+        .signal-box {
+            background: var(--signal-box);
+            border: 2px solid #00ff00;
+            border-radius: 8px;
+            padding: 8px 12px; /* Increased padding */
+            margin: 5px 10px; /* Adjusted margin */
+            height: 60px; /* Increased height for more space */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+        }
+
+        /* Prediction Input Section - Slightly Larger */
+        .prediction-input-section {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px; /* Increased gap */
+            width: 100%;
+            margin-bottom: 5px; /* Increased margin */
+        }
+
+        .period-input-group {
+            display: flex;
+            align-items: center;
+            flex: 1;
+        }
+
+        .period-label {
+            font-size: 0.8rem; /* Increased font size */
+            color: white;
+            margin-right: 6px; /* Adjusted margin */
+            white-space: nowrap;
+        }
+
+        .period-input {
+            width: 50px; /* Slightly wider */
+            padding: 4px; /* Increased padding */
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #00ff00;
+            border-radius: 5px;
+            color: #000;
+            font-size: 0.9rem; /* Increased font size */
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .predict-btn {
+            padding: 6px 10px; /* Increased padding */
+            background: linear-gradient(90deg, #00ff00, #009900);
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-size: 0.8rem; /* Increased font size */
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .predict-btn:hover {
+            opacity: 0.9;
+            box-shadow: 0 0 8px #00ff00;
+        }
+
+        /* Signal Display Section - Slightly Larger Grid */
+        .signal-display-section {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px; /* Increased gap */
+            width: 100%;
+        }
+
+        .signal-card {
+            background: rgba(0, 100, 0, 0.7);
+            border: 1px solid #00ff00;
+            border-radius: 5px;
+            padding: 3px; /* Increased padding */
+            text-align: center;
+            box-shadow: 0 0 5px rgba(0, 255, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 28px; /* Increased fixed height */
+        }
+
+        .signal-card-title {
+            font-size: 0.7rem; /* Increased font size */
+            color: white;
+            font-weight: bold;
+            white-space: nowrap;
+            line-height: 1rem; /* Adjusted line height */
+        }
+
+        .signal-output {
+            font-size: 1.1rem; /* Increased font size */
+            font-weight: bold;
+            color: #ffff00;
+            text-shadow: 0 0 3px #ffff00;
+            line-height: 1.2rem; /* Adjusted line height */
+        }
+
+        /* Site Container - Takes remaining space */
+        .site-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #0e0e1f;
+            position: relative;
+            overflow: hidden;
+            height: calc(100vh - 110px); /* Adjusted for new header and signal box height */
+        }
+
+        /* Site Content Area (Iframe) */
+        #siteContent {
+            flex: 1;
+            overflow: hidden;
+            background: #0e0e1f;
+        }
+
+        .site-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: white;
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0% { text-shadow: 0 0 5px #ffff00; }
+            50% { text-shadow: 0 0 15px #ffff00, 0 0 20px #ffff00; }
+            100% { text-shadow: 0 0 5px #ffff00; }
+        }
+
+        .pulse {
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+
+        /* Loading Screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            flex-direction: column;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(78, 0, 194, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--neon-blue);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        .loading-text {
+            margin-top: 20px;
+            color: var(--neon-blue);
+            font-size: 1.2rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(231, 76, 60, 0.9);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 2000;
+            transform: translateX(120%);
+            transition: transform 0.5s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .app-header {
+                flex-direction: column;
+                height: auto;
+                padding: 8px 10px; /* Adjusted padding */
+                gap: 8px; /* Adjusted gap */
+            }
+            
+            .app-name {
+                margin-bottom: 5px;
+                font-size: 1.1rem; /* Adjusted font size */
+            }
+            
+            .header-controls {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .signal-box {
+                height: auto;
+                padding: 10px;
+                margin: 5px;
+            }
+            
+            .prediction-input-section {
+                flex-direction: column;
+                gap: 8px; /* Adjusted gap */
+            }
+            
+            .period-input-group {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .signal-display-section {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px; /* Adjusted gap */
+            }
+            
+            .site-container {
+                height: auto;
+                min-height: 400px; /* Ensure some height on small screens */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .login-box {
+                padding: 30px 20px;
+            }
+            
+            .app-name {
+                font-size: 1rem; /* Further adjusted font size */
+            }
+            
+            .logout-btn {
+                font-size: 0.75rem;
+                padding: 4px 8px;
+            }
+            
+            .site-btn {
+                padding: 4px 6px;
+                font-size: 0.65rem;
+            }
+            
+            .signal-display-section {
+                grid-template-columns: 1fr;
+                gap: 5px;
+            }
+            .signal-card {
+                height: 35px; /* Adjust height for single column layout */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Loading NUMBER HACK TOOL...</div>
+    </div>
+
+    <div class="login-screen" id="loginScreen">
+        <div class="login-box">
+            <h1 class="login-title">NUMBER HACK TOOL</h1>
+            <input type="password" class="login-input" id="passwordInput" placeholder="Enter VIP Password" autocomplete="off">
+            <button class="login-btn" id="loginBtn">UNLOCK TOOL</button>
+            <p id="errorMessage" style="color: var(--danger); text-align: center; margin-top: 15px; font-size: 0.9rem;"></p>
+        </div>
+    </div>
+
+    <div class="container" id="appContainer">
+        <div class="app-header">
+            <div class="app-name">NUMBER HACK TOOL</div>
+            <div class="header-controls">
+                <div class="site-selector">
+                    <button class="site-btn active" data-site="HGNICE">
+                        <i class="fas fa-gamepad"></i> HG
+                    </button>
+                    <button class="site-btn" data-site="DKWIN">
+                        <i class="fas fa-trophy"></i> DK
+                    </button>
+                </div>
+                <button class="logout-btn" id="logoutBtn">Logout</button>
+            </div>
+        </div>
+
+        <div class="signal-box">
+            <div class="prediction-input-section">
+                <div class="period-input-group">
+                    <label for="periodInput" class="period-label">Last Digit:</label>
+                    <input type="number" id="periodInput" class="period-input" placeholder="0-9" min="0" max="9">
+                </div>
+                <button class="predict-btn" id="predictBtn">PREDICT</button>
+            </div>
+
+            <div class="signal-display-section">
+                <div class="signal-card">
+                    <div class="signal-card-title">SERVER 1</div>
+                    <div class="signal-output" id="signal1">-</div>
+                </div>
+                <div class="signal-card">
+                    <div class="signal-card-title">SERVER 2</div>
+                    <div class="signal-output" id="signal2">-</div>
+                </div>
+                <div class="signal-card">
+                    <div class="signal-card-title">SERVER 3</div>
+                    <div class="signal-output" id="signal3">-</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="site-container">
+            <div id="siteContent">
+                <iframe class="site-frame" id="gameFrame" src="https://tech-bd-99.github.io/HG-DK_HACK/"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <div class="notification" id="notification"></div>
+
+    <script>
+        const VIP_PASSWORD = "1397"; // VIP Password
+        const loadingScreen = document.getElementById('loadingScreen');
+        const loginScreen = document.getElementById('loginScreen');
+        const appContainer = document.getElementById('appContainer');
+        const passwordInput = document.getElementById('passwordInput');
+        const loginBtn = document.getElementById('loginBtn');
+        const errorMessage = document.getElementById('errorMessage');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const periodInput = document.getElementById('periodInput');
+        const predictBtn = document.getElementById('predictBtn');
+        const signal1 = document.getElementById('signal1');
+        const signal2 = document.getElementById('signal2');
+        const signal3 = document.getElementById('signal3');
+        const siteButtons = document.querySelectorAll('.site-btn');
+        const gameFrame = document.getElementById('gameFrame');
+        const notification = document.getElementById('notification');
+
+        // Prediction Logic
+        const afterMap = {
+            0: [2, 7, 6, 9, 3, 4, 8],
+            1: [5, 0, 7, 8, 3, 9, 2],
+            2: [5, 9, 0, 4, 7],
+            3: [7, 5, 0],
+            4: [9, 8, 2, 3, 6, 5],
+            5: [0, 1, 2, 3, 7, 9],
+            6: [0, 9, 8, 7, 2, 3, 4],
+            7: [4, 1, 6, 3, 8],
+            8: [4, 5, 9, 1, 6, 2],
+            9: [6, 4, 0, 2, 3, 7],
+        };
+
+        // --- Functions ---
+        // Show notification
+        function showNotification(message, type = 'error', duration = 3000) {
+            notification.textContent = message;
+            notification.className = 'notification show';
+            
+            if (type === 'success') {
+                notification.style.backgroundColor = 'rgba(0, 210, 106, 0.9)';
+            } else if (type === 'warning') {
+                notification.style.backgroundColor = 'rgba(255, 204, 0, 0.9)';
+            } else {
+                notification.style.backgroundColor = 'rgba(255, 56, 96, 0.9)';
+            }
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, duration);
+        }
+
+        // Unlock app
+        function unlockApp() {
+            const enteredPassword = passwordInput.value;
+            if (enteredPassword === VIP_PASSWORD) {
+                loginScreen.style.display = 'none';
+                appContainer.style.display = 'flex';
+                errorMessage.textContent = '';
+                showNotification('Welcome, VIP User!', 'success');
+            } else {
+                errorMessage.textContent = 'Incorrect password. Please try again.';
+                passwordInput.classList.add('shake');
+                setTimeout(() => passwordInput.classList.remove('shake'), 500);
+            }
+        }
+
+        // Logout
+        function logoutApp() {
+            appContainer.style.display = 'none';
+            loginScreen.style.display = 'flex';
+            passwordInput.value = '';
+            errorMessage.textContent = '';
+            resetSignals();
+            showNotification('Successfully logged out.', 'success');
+        }
+
+        // Generate signals
+        function getSignals(digit) {
+            const possibleSignals = afterMap[digit];
+            if (!possibleSignals || possibleSignals.length === 0) {
+                return ['-', '-', '-'];
+            }
+            
+            const uniqueSignals = [...new Set(possibleSignals)];
+            const results = [];
+            
+            while (results.length < 3 && uniqueSignals.length > 0) {
+                const randomIndex = Math.floor(Math.random() * uniqueSignals.length);
+                results.push(uniqueSignals.splice(randomIndex, 1)[0]);
+            }
+            
+            while (results.length < 3) {
+                results.push('-');
+            }
+            
+            return results;
+        }
+
+        // Display signals
+        function displaySignals(signals) {
+            const signalOutputs = [signal1, signal2, signal3];
+            signalOutputs.forEach((element, index) => {
+                element.textContent = signals[index];
+                element.classList.remove('pulse');
+                void element.offsetWidth;
+                element.classList.add('pulse');
+            });
+        }
+
+        // Reset signals
+        function resetSignals() {
+            signal1.textContent = '-';
+            signal2.textContent = '-';
+            signal3.textContent = '-';
+            signal1.classList.remove('pulse');
+            signal2.classList.remove('pulse');
+            signal3.classList.remove('pulse');
+            periodInput.value = '';
+        }
+
+        // --- Event Listeners ---
+        loginBtn.addEventListener('click', unlockApp);
+        
+        passwordInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                unlockApp();
+            }
+        });
+        
+        logoutBtn.addEventListener('click', logoutApp);
+        
+        predictBtn.addEventListener('click', () => {
+            const digit = parseInt(periodInput.value);
+            if (isNaN(digit) || digit < 0 || digit > 9) {
+                showNotification('Please enter a single digit between 0 and 9.', 'warning');
+                resetSignals();
+                return;
+            }
+            
+            const signals = getSignals(digit);
+            displaySignals(signals);
+        });
+        
+        periodInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                predictBtn.click();
+            }
+        });
+        
+        siteButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                siteButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                const site = button.dataset.site;
+                if (site === 'HGNICE') {
+                    gameFrame.src = "https://tech-bd-99.github.io/HG-DK_HACK/";
+                } else if (site === 'DKWIN') {
+                    gameFrame.src = "https://tech-bd-99.github.io/WIN_GO_HACK/";
+                }
+            });
+        });
+
+        // On load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+                loginScreen.style.display = 'flex';
+                passwordInput.focus();
+            }, 1000);
+        });
+
+        // Shake animation for wrong password
+        const style = document.createElement('style');
+        style.textContent = `
+            .shake {
+                animation: shake 0.5s;
+            }
+            
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-5px); }
+                50% { transform: translateX(5px); }
+                75% { transform: translateX(-5px); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
